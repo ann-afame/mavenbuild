@@ -1,0 +1,52 @@
+<project>
+
+    <property name="lib.dir" value="/usr/share/ant/lib" />
+    <path id="classpath">
+        <pathelement location="${lib.dir}/ant-junit4.jar"/>
+        <pathelement location="${lib.dir}/ant-junit"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+    <target name="tcomp">
+        <javac srcdir="test" destdir="test"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build/classes"/>
+        <javac srcdir="src" destdir="build/classes"/>
+    </target>
+    <target name="tjar" depends="tcomp">
+        <jar destfile="test/hello.jar" basedir="test/hello">
+            <manifest>
+                <attribute name="Test-Class" value="hellotest"/>
+            </manifest>
+       </jar>
+    </target>
+             
+    <target name="jar">
+        <mkdir dir="build/jar"/>
+        <jar destfile="build/jar/hello.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="hello"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run">
+        <java jar="build/jar/hello.jar" fork="true"/>
+    </target>
+
+    <target name="junit" depends="tjar">
+        <junit printsummary="yes">
+        <classpath refid="classpath" />
+        <classpath location="test"/>
+        <test name="hellotest" haltonfailure="no" todir="test/results">
+        <formatter type="plain"/>
+        <formatter type="xml"/>
+        </test>
+        </junit>
+    </target>
+
+</project>
